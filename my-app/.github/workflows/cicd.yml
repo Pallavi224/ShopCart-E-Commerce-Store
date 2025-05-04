@@ -1,0 +1,32 @@
+name: "deployee the appto aws"
+
+on: workflow_dispatch
+
+jobs:
+    deploy:
+        runs-on: self-hosted
+        steps:
+            - name:  "Setup Node.js"
+              uses: actions/Setup-nodejs@v4
+              with:
+                  node-version: '18' # Specify the Node.js version you want to use
+
+            - name: "checkout code"
+              uses: actions/checkout@v2
+            - name: "Install dependencies"
+              run: |
+                npm install
+                npm run build
+            - name: "install pm2 globaly"
+              run: |
+                npm install pm2 -g
+            - name: "run the test"
+              run: |
+                    npm test
+            - name: "Deploy to AWS"
+              run: |
+               
+                pm2 start server.js --name "my-app"
+                pm2 save
+                pm2 startup
+        
